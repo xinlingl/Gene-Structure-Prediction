@@ -12,7 +12,7 @@ initialState = [0.6, 0.4]
     print("emission "+str(emission))"""
 
 transition = [[0.7, 0.3], [0.4, 0.6]]
-emission = [[0.5, 0, 0],[0.1, 0, 0]]
+emission = [[0.5, 0.4, 0.1],[0.1, 0.3, 0.6]]
 
 def forward(s):
     #dictionary = {'A': 0, 'C': 1, 'G': 2, 'T': 3}
@@ -42,9 +42,10 @@ def forward(s):
 
 def backward(s):
     dictionary = {'A': 0, 'G': 1, 'C': 2}
-    result = [[0]*len(s) for i in range(9)]
+    result = [[0]*len(s) for i in range(2)]
     for index in range(0, len(initialState)):
         result[index][len(s)-1]=1
+    print("result here "+str(result))
 
     j = len(s) - 2
     while j>=0:
@@ -53,12 +54,17 @@ def backward(s):
             for temp in range(0, len(initialState)):
                 print("temp "+str(temp))
                 print("j "+str(j))
+                print("result[temp][j+1] "+str(result[temp][j+1]))
+                print("transition[z][temp] "+str(transition[z][temp]))
+                print("emission[temp][dictionary[s[j + 1]]] "+str(emission[temp][dictionary[s[j + 1]]]))
+                total = total + result[temp][j+1] * transition[z][temp] * emission[temp][dictionary[s[j + 1]]]
+                print("total "+str(total))
                 print("")
-                total = total + result[temp][j+1] * transition[z][temp] * transition[temp][dictionary[s[j]]]
+            result[z][j] = total
         j = j - 1
-    print("total "+str(total))
+    print("result "+str(result))
         
 if __name__ == "__main__":
     #initialization()
     #forward("AAGGC")
-    backward("AAGGC")
+    backward("GCCCA")
