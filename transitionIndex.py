@@ -29,7 +29,7 @@ def transitionIndex(states, observations):
     return row_index
 
 
-if __name__!="__main__":
+def test_transitionIndex():
     """TEST CASES"""
     st = 'N'; ob = 'A'
     expected =  0
