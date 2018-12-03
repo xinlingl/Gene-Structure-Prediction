@@ -72,4 +72,4 @@ def label_data(fasta, csvfile):
 
 #label_data("two_exon_test.fa", "two_exon.csv")
 #label_data("test.fa", "test_annot.csv")
-label_data("Mus_musculus.GRCm38.dna.chromosome.1.fa", "mouse_chr1_annot.csv")
+label_data("Mus_musculus.GRCm38.dna.chromosome.2.fa", "mouse_chr2_annot.csv")

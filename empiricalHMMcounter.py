@@ -47,10 +47,33 @@ def openFile(input_file_nucleotides, input_file_annotations):
     return s,t
 
 
+def initial_state_prob(state_strings):
+    probs = np.ones(9)
+    for state_str in state_strings:
+        state = state_str[0]
+        probs[STATE_INDICES[state]] += 1
+    sum_probs = sum(probs)
+    probs = [x/sum_probs for x in probs]
+    return probs
+
+
+def transition_probs_to_n(n, obs_string, state_str):
+    matrices = []
+    for i in range(1,n):
+        transitionMatrix = np.ones(((9 ** n) * (4 ** n), 9))
+        state = state_str[:i]
+        obs = obs_string[:i]
+        row_index = transitionIndex(state, obs)
+        col_index = STATE_INDICES[state_str[i + 1]]
+        transitionMatrix[row_index][col_index] = transitionMatrix[row_index][col_index] + 1
+        matrices.append(transitionMatrix)
+    return matrices
+
+
 def count_params_transition(n, file_nucleotides, file_annotations):
     obs_string, state_string = openFile(file_nucleotides, file_annotations)
 
-    # TODO: Create matrix of zeros with 9^n*4^n rows and 9 columns
+    # TODO: Create matrix of ones with 9^n*4^n rows and 9 columns
     transitionMatrix = np.ones(((9**n)*(4**n),9))
     emissionMatrix = np.ones((4,9))
 
@@ -59,18 +82,24 @@ def count_params_transition(n, file_nucleotides, file_annotations):
         state = state_string[i:i+n]
         row_index = transitionIndex(state, obs)
         col_index = STATE_INDICES[state_string[i+n]]
-        transitionMatrix[row_index][col_index] = np.add(transitionMatrix[row_index][col_index], 1)
+        transitionMatrix[row_index][col_index] = transitionMatrix[row_index][col_index] + 1
+
+        obs_emit = obs_string[i]
+        state_emit = state_string[i]
+        obs_i = OBSERVATION_INDICES[obs_emit]
+        state_i = STATE_INDICES[state_emit]
+        emissionMatrix[obs_i, state_i] = emissionMatrix[obs_i, state_i] + 1
+
+    for i in range(len(obs_string)-n, len(obs_string)):
+        obs_emit = obs_string[i]
+        state_emit = state_string[i]
+        obs_i = OBSERVATION_INDICES[obs_emit]
+        state_i = STATE_INDICES[state_emit]
+        emissionMatrix[obs_i, state_i] = emissionMatrix[obs_i, state_i] + 1
 
     for j in range(0, len(transitionMatrix)):
         sumRows = float(sum(transitionMatrix[j]))
         transitionMatrix[j] = transitionMatrix[j]/sumRows
-
-    for k in range(0,len(obs_string)):
-        obs_emit = obs_string[k]
-        state_emit = state_string[k]
-        obs_i = OBSERVATION_INDICES[obs_emit]
-        state_i = STATE_INDICES[state_emit]
-        emissionMatrix[obs_i,state_i] = emissionMatrix[obs_i,state_i]+1
 
     for l in range(0, len(emissionMatrix)):
         sumRows = float(sum(emissionMatrix[l]))
@@ -79,13 +108,3 @@ def count_params_transition(n, file_nucleotides, file_annotations):
 
     return transitionMatrix, emissionMatrix
 
-n =  sys.argv[1]
-n = int(n)
-file_nucleotides = sys.argv[2]
-file_annotations = sys.argv[3]
-
-transition_matrix, emission_matrix = count_params_transition(2,file_nucleotides,file_annotations)
-for i in range(0,100):
-    print transition_matrix[i]
-
-print emission_matrix
