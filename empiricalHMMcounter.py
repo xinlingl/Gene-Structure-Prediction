@@ -66,6 +66,10 @@ def transition_probs_to_n(n, obs_string, state_str):
         row_index = transitionIndex(state, obs)
         col_index = STATE_INDICES[state_str[i + 1]]
         transitionMatrix[row_index][col_index] = transitionMatrix[row_index][col_index] + 1
+        for i in range(0, len(transitionMatrix)):
+            row = transitionMatrix[i]
+            sum_row = sum(row)
+            transitionMatrix[i] = row/float(sum_row)
         matrices.append(transitionMatrix)
     return matrices
 
