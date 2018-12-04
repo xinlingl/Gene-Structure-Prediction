@@ -24,7 +24,7 @@ def forward(s, initialState, transition, emission):
             for temp in range(0, len(initialState)):
                 total = total + result[temp][j-1] * transition[temp][z]
             result[z][j] = total * emission[z][dictionary[s[j]]]
-    print("forward result "+str(result))
+    # print("forward result "+str(result))
     return result
 
 def backward(s, initialState, transition, emission):
@@ -41,7 +41,7 @@ def backward(s, initialState, transition, emission):
                 total = total + result[temp][j+1] * transition[z][temp] * emission[temp][dictionary[s[j + 1]]]
             result[z][j] = total
         j = j - 1
-    print("backward result "+str(result))
+    # print("backward result "+str(result))
     return result
         
 if __name__ == "__main__":

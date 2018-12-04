@@ -21,9 +21,11 @@ def EM(filename):
 
         # forward
         alpha = forward(observations, pi, p, B)
+        alpha = np.array(alpha)
 
         # backward
         beta = backward(observations, pi, p, B)
+        beta = np.array(beta)
 
         # expectation
         C_list, gamma = Expectation(alpha, beta, p, B, observations)
@@ -53,12 +55,15 @@ def Expectation(alpha, beta, p, B, observations):
         denominator = np.sum(C)
         C = C / denominator
         C_list.append(C)
+    C_list = np.array(C_list)
+    print(C_list.shape)
     
-    gamma = np.zeros((n_hidden_states, timestep-1))
+    gamma = np.zeros((n_hidden_states, timestep))
     for i in range(n_hidden_states):
         for t in range(timestep-1):
-            print(np.sum(C_list[t], axis=1))
             gamma[:, t] = np.sum(C_list[t], axis=1).T
+    gamma[:, -1] = np.sum(C_list[-1], axis=0).T
+    print("gamma", gamma)
 
     return C_list, gamma
 
@@ -67,53 +72,27 @@ def Maximization(C_list, gamma, observations):
     pi = gamma[:, 0] # 1 x 9
     print("pi", pi)
     # estimate transition matrix p
-    numerator = np.sum(np.array(C_list), axis=0)
+    numerator = np.sum(C_list, axis=0)
     p = numerator / np.sum(gamma[:,:-1], axis=1) # 9 x 9
-    print("p", p.shape)
+    print("p", p)
     # estimate emission matrix B
     B = np.zeros((n_hidden_states, n_unique_observations))
+    observations_index = [0 for i in range(len(gamma[0]))]
+    for i in range(len(gamma[0])):
+            observations_index[i] = OBS_DICT[observations[i]]
     for k in range(n_unique_observations):
-        mask = observations == k
-        print(mask)
+        mask = []
+        for s in observations_index:
+            if s == k:
+                mask.append(True)
+            else:
+                mask.append(False)
         B[:, k] = np.sum(gamma[:, mask], axis=1) / np.sum(gamma, axis=1)
+    print("B", B)
     
     return pi, p, B
-
 
 if __name__ == '__main__':
     n_hidden_states = 9
     n_unique_observations = 4
     EM("")
-
-"""
-# transition probability
-p = np.array([
-    [0.7, 0.3],
-    [0.4, 0.6]
-])
-
-# emission probability
-B = np.array([
-    [0.5, 0.4, 0.1],
-    [0.1, 0.3, 0.6]
-])
-
-# initial state distribution
-pi = np.array([0.6, 0.4])
-
-# [N, N, C, C, D, C, D, D, D, N]
-observations = np.array([0, 0, 1, 1, 2])
-
-# [H, H, H, H, F, F, F, F, F, H]
-states = np.array([0, 0, 0, 0, 1])
-
-alpha = np.array([
-    [0.3, 0.113, 0.033464, 0.01132544, 0.001],
-    [0.04, 0.114, 0.012222, 0.0052117, 0.0039147984]
-])
-
-beta = np.array([
-    [0.0150296, 0.03976, 0.106, 0.25, 1],
-    [0.0101792, 0.03712, 0.112, 0.4, 1]
-])
-"""
