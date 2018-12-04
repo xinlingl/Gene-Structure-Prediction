@@ -21,8 +21,8 @@ OBS_DICT = {
 
 def load_state(filename):
     # states = np.loadtxt(filename, dtype=str)
-    states = "NNNNNNNNNNEEEpPIIIIIZzsSEEEEEEEE"
-    observations = "AACGGTGACGGCCAACACGACGTGCATATGGG"
+    states = "NNNEEEpPIIIZzsSEE"
+    observations = "ACGGCCAACAACGTGCA"
 
     timestep = len(states)
     states_index = [0 for i in range(timestep)]
@@ -32,4 +32,5 @@ def load_state(filename):
         states_index[i] = STATE_DICT[states[i]]
         observations_index[i] = OBS_DICT[observations[i]]
 
-    return states_index, observations_index
+    return states, observations
+    # return states_index, observations_index
