@@ -1,6 +1,6 @@
 import numpy as np
 from annotation import load_state, OBS_DICT
-from forward_backward import initialization, forward, backward
+from project_temp2 import initialization, forward, backward
 
 
 def EM(states_filename, obs_filename):
@@ -9,6 +9,7 @@ def EM(states_filename, obs_filename):
     # The variable observations is a string.
     # The variable observations_index is a list of integers
     states, observations, observations_index = load_state(states_filename, obs_filename)
+    newDictionary = {'A': 1/4, 'T': 1/4, 'C': 1/4, 'G': 1/4}
     print(observations)
     nepoch = 5
     for e in range(nepoch):
@@ -21,11 +22,11 @@ def EM(states_filename, obs_filename):
             pi, p, B = initialization()
 
         # forward
-        alpha = forward(observations, pi, p, B)
+        alpha = forward(observations, pi, p, B, newDictionary)
         alpha = np.array(alpha)
 
         # backward
-        beta = backward(observations, pi, p, B)
+        beta = backward(observations, pi, p, B, newDictionary)
         beta = np.array(beta)
 
         # expectation
@@ -33,6 +34,7 @@ def EM(states_filename, obs_filename):
 
         # maximization
         pi, p, B = Maximization(C_list, gamma, observations_index)
+        pi, p, B = normalize(pi, p, B)
     
     print("pi", pi)
     print("p", p)
@@ -88,6 +90,12 @@ def Maximization(C_list, gamma, observations_index):
                 mask.append(False)
         B[:, k] = np.sum(gamma[:, mask], axis=1) / np.sum(gamma, axis=1)
     
+    return pi, p, B
+
+def normalize(pi, p, B):
+    pi = pi / np.sum(pi)
+    p = p / np.sum(p, axis=1).reshape(-1, 1)
+    B = B / np.sum(B, axis=1).reshape(-1, 1)
     return pi, p, B
 
 if __name__ == '__main__':

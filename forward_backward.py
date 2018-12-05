@@ -36,7 +36,7 @@ def forward(s, initialState, transition, emission, newdictionary):
     print("forward result "+str(result))
     return result
 
-def backward(s, initialState, transition, emission):
+def backward(s, initialState, transition, emission, newDictionary):
     dictionary = {'A': 0, 'C': 1, 'G': 2, 'T': 3}
     result = [[0 for j in range(len(s))] for i in range(9)]
     for index in range(0, len(initialState)):
