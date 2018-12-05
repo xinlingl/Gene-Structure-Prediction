@@ -1,13 +1,27 @@
-def initialization():
-    initialState=[1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9)]
-    transition=[]
-    emission=[]
-    for index in range(0,9):
-        transition.append(initialState)
+import numpy as np
 
-    for i in range(0,9):
-        emission.append([1/float(4),1/float(4),1/float(4),1/float(4)])
-    return initialState, transition, emission
+def initialization():
+    initialState = [1/18, 2/18, 3/18, 1/18, 2/18, 2/18, 4/18, 2/18, 1/18]
+    transition=[]
+
+    for i in range(9):
+        transition.append([1/9 for i in range(9)])
+    print("transition matirx", transition)
+    # for i in range(9):
+    #     emission.append([1/8, 2/8, 3/8, 2/8])
+    emission = np.array([
+        [1/4, 1/4, 1/4, 1/4],
+        [1/8, 2/8, 3/8, 2/8],
+        [1/8, 1/8, 4/8, 2/8],
+        [3/8, 3/8, 1/8, 1/8],
+        [2/8, 2/8, 2/8, 2/8],
+        [1/8, 3/8, 1/8, 3/8],
+        [2/8, 3/8, 1/8, 2/8],
+        [4/8, 1/8, 1/8, 2/8],
+        [5/8, 1/8, 1/8, 1/8]
+        ])
+    print("emission matrix", emission)
+    return np.array(initialState), np.array(transition), np.array(emission)
 
 def forward(s, initialState, transition, emission):
     """

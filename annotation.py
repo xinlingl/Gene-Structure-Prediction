@@ -19,10 +19,12 @@ OBS_DICT = {
     'T': 3
 }
 
-def load_state(filename):
-    # states = np.loadtxt(filename, dtype=str)
-    states = "NEEpPIIZzsSE"
-    observations = "ACGGCCAACAACGTGCA"
+def load_state(states_filename, obs_filename):
+    states = np.loadtxt(states_filename, dtype=str)[1][50000:50000+500]
+    observations = np.loadtxt(obs_filename, dtype=str)[1][50000:50000+500]
+    # states = "NEEpPIIZzsSE"
+    # observations = "ACGTCCAACCCA"
+    assert len(states) == len(observations)
 
     timestep = len(states)
     states_index = [0 for i in range(timestep)]
@@ -32,6 +34,5 @@ def load_state(filename):
         states_index[i] = STATE_DICT[states[i]]
         observations_index[i] = OBS_DICT[observations[i]]
 
-    print(states_index, observations_index)
-    return states, observations
-    # return states_index, observations_index
+    # observations_index is a list of integers
+    return states, observations, observations_index

@@ -3,13 +3,14 @@ from annotation import load_state, OBS_DICT
 from forward_backward import initialization, forward, backward
 
 
-def EM(filename):
+def EM(states_filename, obs_filename):
     # states are the true labels
     # observations are the training data
-    states, observations = load_state(filename)
-    print(states)
+    # The variable observations is a string.
+    # The variable observations_index is a list of integers
+    states, observations, observations_index = load_state(states_filename, obs_filename)
     print(observations)
-    nepoch = 1
+    nepoch = 5
     for e in range(nepoch):
         if e == 0:
             # initialize lambda.
@@ -31,8 +32,11 @@ def EM(filename):
         C_list, gamma = Expectation(alpha, beta, p, B, observations)
 
         # maximization
-        pi, p, B = Maximization(C_list, gamma, observations)
+        pi, p, B = Maximization(C_list, gamma, observations_index)
     
+    print("pi", pi)
+    print("p", p)
+    print("B", B)
     return pi, p, B
 
 def Expectation(alpha, beta, p, B, observations):
@@ -53,33 +57,28 @@ def Expectation(alpha, beta, p, B, observations):
             for j in range(len(beta)):
                 C[i][j] = alpha[i][t] * p[i][j] * beta[j][t+1] * B[j][OBS_DICT[observations[t+1]]]
         denominator = np.sum(C)
-        C = C / denominator
+        C = C / (denominator+1e-9)
         C_list.append(C)
     C_list = np.array(C_list)
-    print(C_list.shape)
     
     gamma = np.zeros((n_hidden_states, timestep))
     for i in range(n_hidden_states):
         for t in range(timestep-1):
             gamma[:, t] = np.sum(C_list[t], axis=1).T
     gamma[:, -1] = np.sum(C_list[-1], axis=0).T
-    print("gamma", gamma)
 
     return C_list, gamma
 
-def Maximization(C_list, gamma, observations):
+def Maximization(C_list, gamma, observations_index):
     # estimate Pi
     pi = gamma[:, 0] # 1 x 9
-    print("pi", pi)
+
     # estimate transition matrix p
     numerator = np.sum(C_list, axis=0)
     p = numerator / np.sum(gamma[:,:-1], axis=1) # 9 x 9
-    print("p", p)
+
     # estimate emission matrix B
     B = np.zeros((n_hidden_states, n_unique_observations))
-    observations_index = [0 for i in range(len(gamma[0]))]
-    for i in range(len(gamma[0])):
-            observations_index[i] = OBS_DICT[observations[i]]
     for k in range(n_unique_observations):
         mask = []
         for s in observations_index:
@@ -88,11 +87,13 @@ def Maximization(C_list, gamma, observations):
             else:
                 mask.append(False)
         B[:, k] = np.sum(gamma[:, mask], axis=1) / np.sum(gamma, axis=1)
-    print("B", B)
     
     return pi, p, B
 
 if __name__ == '__main__':
     n_hidden_states = 9
     n_unique_observations = 4
-    EM("")
+    EM(
+        "../data/Mus_musculus.GRCm38.dna.chromosome.1.NoN_annotations.fa",
+        "../data/Mus_musculus.GRCm38.dna.chromosome.1.NoN.fa"
+    )
