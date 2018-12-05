@@ -1,3 +1,4 @@
+import numpy as np
 #initialState=[1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9), 1/float(9)]
 initialState = [0.6, 0.4]
 #transition=[]
@@ -38,7 +39,7 @@ def forward(s):
                 print("transition[temp][z] "+str(transition[temp][z]))
                 print("total "+str(total))
             result[z][j] = total * emission[z][dictionary[s[j]]]
-    print("result "+str(result))
+    return result
 
 def backward(s):
     dictionary = {'A': 0, 'G': 1, 'C': 2}
@@ -62,9 +63,19 @@ def backward(s):
                 print("")
             result[z][j] = total
         j = j - 1
-    print("result "+str(result))
-        
+    return result
+
+"""def calculateC(forward, backward):
+    for index in range(0, len(forward[0]) - 1):
+        transition = [[0]*len(forward[0]) for i in range(forward[0])]
+            for i in range(0, len(transition)):
+                for j in range(0, len(transition)):
+                    numerator = forward[i][index]*p[i][j]*backward[j][index+1]*b["""
 if __name__ == "__main__":
     #initialization()
-    #forward("AAGGC")
-    backward("GCCCA")
+    #result = forward("AAGGC")
+    #print("result "+str(result))
+    #newresult = backward("AAGGC")
+    #print("newresult "+str(newresult))
+    C=[[1,1,1],[2,2,2],[3,3,3]]
+    print(np.sum(C))
