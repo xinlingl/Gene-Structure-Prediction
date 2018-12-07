@@ -43,7 +43,9 @@ initial_prob_list = np.array(initial_prob_list)
 initial_prob_list = initial_prob_list / sum(initial_prob_list)
 print(initial_prob_list)
 
-model = hmm.MultinomialHMM(n_components=9, n_iter=1000, startprob_prior=initial_prob_list)
+model = hmm.MultinomialHMM(n_components=9, n_iter=100)
+print(model.startprob_prior)
+print(model.transmat_)
 model.startprob_ = initial_prob_list
 model.fit(observations_index)
 prob, states = model.decode(observations_index)
