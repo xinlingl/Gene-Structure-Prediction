@@ -1,1 +1,1 @@
-# Gene-Structure-Prediction
+# Gene-Structure-Prediction using HMM
