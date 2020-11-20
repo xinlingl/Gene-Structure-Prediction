@@ -1,5 +1,9 @@
 # Gene-Structure-Prediction using HMM
 
+Goal: Predict up-to-date annotation of mouse genome.  
+
+<br />
+
 There are two parts of the analysis: 
 
 Part 1: Implement Baum-Welch algorithm to get the parameters of HMM model 
