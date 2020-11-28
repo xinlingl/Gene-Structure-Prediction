@@ -1,4 +1,4 @@
-# Gene-Structure-Prediction using HMM
+# Gene-Structure-Prediction 
 
 Goal: Predict up-to-date annotation of mouse genome.  
 
