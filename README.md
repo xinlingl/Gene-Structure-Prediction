@@ -12,4 +12,4 @@ Part 2: Implement Gibbs sampler to sample new states in our model
 
 <br />
 
-Please read the Gene_Structure_Prediction.pdf for more information about the performance of our model. 
+Please read Gene_Structure_Prediction.pdf for more information about the performance of our model. 
